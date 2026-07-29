@@ -16,7 +16,6 @@
 
   let siteData = { sessions: [] };
   let lastBeatAt = 0;
-  let expanded = false;
 
   async function beat() {
     if (document.visibilityState !== "visible") return;
@@ -57,66 +56,46 @@
   shadow.innerHTML = `
     <style>
       :host { all: initial; }
-      .wrap {
-        position: fixed; top: 12px; right: 12px; z-index: 2147483647;
-        font: 500 12.5px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        color: #fff; text-align: right; user-select: none;
-        display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
-      }
-      .pill {
-        display: inline-flex; align-items: center; gap: 6px;
-        background: rgba(20, 20, 24, 0.82); backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 999px; padding: 5px 12px; cursor: pointer;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-      }
-      .pill:hover { background: rgba(20, 20, 24, 0.95); }
-      .dot { width: 7px; height: 7px; border-radius: 50%; background: #ff453a; }
-      .dot.idle { background: #8e8e93; }
       .panel {
-        background: rgba(20, 20, 24, 0.92); backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 12px; padding: 10px 14px; min-width: 190px;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4); text-align: left;
+        position: fixed; top: 12px; right: 12px; z-index: 2147483647;
+        font: 500 12.5px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #fff; user-select: none; pointer-events: none;
+        background: rgba(30, 30, 34, 0.45);
+        backdrop-filter: blur(14px) saturate(1.4);
+        -webkit-backdrop-filter: blur(14px) saturate(1.4);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 12px; padding: 8px 12px; min-width: 170px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
       }
-      .panel h1 { font-size: 11px; font-weight: 600; margin: 0 0 2px;
-                  color: #98989e; text-transform: uppercase; letter-spacing: 0.4px; }
-      .total { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-      .row { display: flex; justify-content: space-between; gap: 16px; padding: 2px 0; }
-      .row .when { color: #98989e; }
-      .row.current .when { color: #ff453a; }
-      .sep { border: 0; border-top: 1px solid rgba(255,255,255,0.12); margin: 8px 0 6px; }
+      .head { display: flex; justify-content: space-between; align-items: baseline;
+              gap: 16px; }
+      .site { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.75);
+              text-transform: uppercase; letter-spacing: 0.4px; }
+      .total { font-size: 16px; font-weight: 700; }
+      .row { display: flex; justify-content: space-between; gap: 16px; padding: 1px 0; }
+      .row .when { color: rgba(255,255,255,0.65); }
+      .row.current .when { color: #ff6b60; }
+      .sep { border: 0; border-top: 1px solid rgba(255,255,255,0.16); margin: 6px 0 4px; }
       .hidden { display: none; }
     </style>
-    <div class="wrap">
-      <div class="pill" part="pill">
-        <span class="dot"></span><span class="pill-text">0s</span>
+    <div class="panel">
+      <div class="head">
+        <span class="site"></span><span class="total">0s</span>
       </div>
-      <div class="panel hidden">
-        <h1 class="site"></h1>
-        <div class="total"></div>
-        <div class="current-wrap"></div>
-        <hr class="sep">
-        <h1>Earlier today</h1>
-        <div class="history"></div>
-      </div>
+      <hr class="sep top-sep hidden">
+      <div class="current-wrap"></div>
+      <div class="history"></div>
     </div>`;
 
   const el = {
-    dot: shadow.querySelector(".dot"),
-    pillText: shadow.querySelector(".pill-text"),
-    panel: shadow.querySelector(".panel"),
     site: shadow.querySelector(".site"),
     total: shadow.querySelector(".total"),
+    topSep: shadow.querySelector(".top-sep"),
     currentWrap: shadow.querySelector(".current-wrap"),
     history: shadow.querySelector(".history"),
-    sep: shadow.querySelector(".sep"),
   };
   el.site.textContent = DOMAIN;
-  shadow.querySelector(".pill").addEventListener("click", () => {
-    expanded = !expanded;
-    el.panel.classList.toggle("hidden", !expanded);
-  });
 
   function attach() {
     if (!document.documentElement.contains(host)) {
@@ -136,9 +115,7 @@
     const unsynced = visible && lastBeatAt ? Math.min(now - lastBeatAt, BEAT_MS * 3) : 0;
     const total = synced + unsynced;
 
-    el.pillText.textContent = fmt(total);
     el.total.textContent = fmt(total);
-    el.dot.classList.toggle("idle", !visible);
 
     const last = sessions[sessions.length - 1];
     const inSession = visible && last && now - last.end <= SESSION_GAP_MS;
@@ -165,9 +142,8 @@
       row.lastElementChild.textContent = fmt(s.end - s.start);
       el.history.appendChild(row);
     }
-    const hasEarlier = earlier.length > 0;
-    el.sep.classList.toggle("hidden", !hasEarlier);
-    el.history.previousElementSibling.classList.toggle("hidden", !hasEarlier);
+
+    el.topSep.classList.toggle("hidden", !inSession && earlier.length === 0);
   }
 
   attach();

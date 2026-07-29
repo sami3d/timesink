@@ -6,10 +6,10 @@ Tracked out of the box: **Instagram, Facebook, YouTube, 9GAG**.
 
 ## What it looks like
 
-- A small dark pill floats over the page: `● 45m 06s` — your total for today on this site, ticking live.
-- Click it for the breakdown:
+- A small glass panel floats over the page's top-right corner — always visible, nothing to click, and it never blocks the page (clicks pass straight through it):
+  - **45m 06s** — your total for today on this site, ticking live
   - **Now, since 19:49 · 6m** — the session you're currently in
-  - **Earlier today** — every previous session with its time range and duration
+  - Every previous session today with its time range and duration
 - Hours only appear once you've spent an hour (`1h 12m`); before that it's minutes and seconds.
 - Everything resets at local midnight.
 - The pill hides itself during fullscreen video.
