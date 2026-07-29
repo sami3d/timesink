@@ -12,7 +12,7 @@ Tracked out of the box: **Instagram, Facebook, YouTube, 9GAG**.
   - Every previous session today with its time range and duration
 - Hours only appear once you've spent an hour (`1h 12m`); before that it's minutes and seconds.
 - Everything resets at local midnight.
-- The pill hides itself during fullscreen video.
+- The panel hides itself during fullscreen video.
 
 ## How counting works
 
