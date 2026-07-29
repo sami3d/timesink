@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "TimeSink",
+  "version": "1.0.0",
+  "description": "Floats a live counter on time-sink sites showing how long you've spent there today, with a session-by-session breakdown. Resets daily.",
+  "permissions": ["storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.instagram.com/*",
+        "*://*.facebook.com/*",
+        "*://*.youtube.com/*",
+        "*://*.9gag.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "TimeSink — today's totals"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
